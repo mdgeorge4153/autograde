@@ -5,13 +5,20 @@ import argparse
 parser = argparse.ArgumentParser(description='summarize data from a CSV or TSV file')
 
 parser.add_argument('-r', '--row', help='use field named by NAME as a row header',
-                    action='append', metavar='NAME')
+                    action='append', metavar='NAME', dest='rows', required=True)
 
 parser.add_argument('-c', '--col', help='use field named by NAME as a column header',
-                    action='append', metavar='NAME')
+                    action='append', metavar='NAME', dest='cols', required=True)
 
-parser.add_argument('-v', '--val', help='use EXPR to compute table entries',
-                    action='append', metavar='EXPR')
+parser.add_argument('-v', '--val', help='summarize the field named by NAME',
+                    metavar='NAME', required=True,
+                    action='store', dest='values')
+
+parser.add_argument('-f', '--fun', help='use FUN to compute table entries',
+                    action='store', default='count')
+
+parser.add_argument('--filter', help='only consider values where FIELD = VAL',
+                    action='store', nargs=2, metavar=('FIELD', 'VAL'))
 
 parser.add_argument('--csv', help="input/output in CSV format (use ',' as delimeter)",
                     action='store_const', const=',', dest='delim')
@@ -26,7 +33,7 @@ parser.add_argument('--no-header', help='data has no header; field names are num
                     action='store_true')
 
 parser.add_argument('input', help='filename or -',
-                    nargs='*', default=['-'])
+                    nargs='?', default='-')
 
 print parser.parse_args()
 
