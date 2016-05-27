@@ -56,6 +56,9 @@ results/%.line: $(RESULTS_DIR)
 	cd -; \
 	echo -e $$(date +'%s')\\t$${netid}\\t$${test}\\t$${result} | tee $@
 
+%.csv: %.tsv
+	sed 's/\t/,/g' $^ > $@
+
 results.tsv: $(RESULTS_LIST)
 	echo -e Timestamp\\tNetID\\tTest\\tResult | cat - $^ > $@
 
