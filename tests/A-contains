@@ -1,0 +1,4 @@
+#!/bin/bash
+
+grep -i "I pass" README.txt
+

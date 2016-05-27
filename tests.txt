@@ -1,0 +1,4 @@
+
+A-contains
+B-yes
+C-true
