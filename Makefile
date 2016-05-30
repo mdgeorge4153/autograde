@@ -4,7 +4,7 @@ all: results.tsv
 help:
 	echo "TODO: usage"
 
-report: test_summary.tsv stud_summary.tsv
+report: test_summary.tsv stud_summary.tsv stud_detail.csv
 	echo ""
 	echo "RESULTS:"
 	bin/pad test_summary.tsv
@@ -79,4 +79,7 @@ test_summary.tsv: results.tsv
 
 stud_summary.tsv: results.tsv
 	bin/pivot -r NetID -c Result -v Test < $< > $@
+
+stud_detail.tsv: results.tsv
+	bin/pivot -r NetID -r Level -r Test -c Result -v Test < $< > $@
 
