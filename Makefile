@@ -59,7 +59,10 @@ results/%.line: $(RESULTS_DIR)
 %.csv: %.tsv
 	sed 's/\t/,/g' $^ > $@
 
-results.tsv: $(RESULTS_LIST)
-	echo -e Timestamp\\tNetID\\tTest\\tResult | cat - $^ > $@
+results.tsv: $(RESULTS_LIST) $(NETIDS_LIST) $(TESTS_LIST)
+	echo -e Timestamp\\tNetID\\tLevel\\tTest\\tResult \
+		| cat - $(RESULTS_LIST) \
+		| sed 's/-/\t/g' \
+		> $@
 
 
