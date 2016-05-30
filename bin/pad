@@ -20,8 +20,8 @@ for line in input:
 
 for line in input:
 	for i,f in enumerate(line.split('\t')):
-		sys.stdout.write(f.strip().ljust(sizes[i]))
 		sys.stdout.write('\t')
+		sys.stdout.write(f.strip().ljust(sizes[i]))
 	sys.stdout.write('\n')
 
 
