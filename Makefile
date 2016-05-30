@@ -14,6 +14,7 @@ clean:
 	git clean -fdX
 
 .PHONY: default all help report
+.SILENT:
 
 ################################################################################
 
