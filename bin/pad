@@ -1,0 +1,22 @@
+#!/usr/bin/python
+
+import sys
+
+sizes = []
+
+input = sys.stdin.readlines()
+
+for line in input:
+	fields = line.split('\t')
+	while len(sizes) < len(fields):
+		sizes.append(0)
+
+	for i,f in enumerate(fields):
+		sizes[i] = max(sizes[i], len(f))
+
+for line in input:
+	for i,f in enumerate(line.split('\t')):
+		sys.stdout.write('\t')
+		sys.stdout.write(f.ljust(sizes[i]))
+
+

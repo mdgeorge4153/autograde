@@ -32,8 +32,107 @@ parser.add_argument('-d','--delim', help='use the given delimeter',
 parser.add_argument('--no-header', help='data has no header; field names are numbers',
                     action='store_true')
 
-parser.add_argument('input', help='filename or -',
-                    nargs='?', default='-')
+parser.add_argument('filename', help='filename or -',
+		    action='store', nargs='?', default='-')
 
-print parser.parse_args()
+
+args = parser.parse_args()
+
+################################################################################
+
+import csv
+import sys
+
+infile = sys.stdin if args.filename == '-' else open(args.filename, 'rb')
+
+reader = csv.DictReader(infile)
+
+# vals has an entry for each output row (keyed by the row as a tuple)
+# each entry is a dictionary (keyed on column names), containing a list of entries
+
+row_fields = args.rows
+col_fields = args.cols
+val_field  = args.values
+
+rows   = []
+cols   = []
+vals = {}
+
+for line in reader:
+
+	row_id = tuple([line[f] for f in row_fields])
+	if not row_id in rows:
+		rows.append(row_id)
+	if not row_id in vals:
+		vals[row_id] = {}
+	row = vals[row_id]
+
+	col_id = tuple([line[f] for f in col_fields])
+	if not col_id in cols:
+		cols.append(col_id)
+	if not col_id in row:
+		row[col_id] = []
+
+	row[col_id].append(line[val_field])
+
+################################################################################
+
+# TODO: interpret -f argument
+
+def len_as_str(l):
+	return str(len(l))
+
+combiner = len_as_str
+
+################################################################################
+
+cols.sort()
+
+delim = '\t'
+
+# compute spacers (max size of each value in row header)
+sizes=[0 for row in row_fields]
+for row in rows:
+	for i,f in enumerate(row):
+		sizes[i] = max(sizes[i], len(f))
+spaces=[' '*n for n in sizes]
+spacer=delim.join(spaces)
+
+# print header
+for i,f in enumerate(col_fields):
+
+	for f in row_fields:
+		sys.stdout.write(delim)
+
+	prev_col = None
+	for col in cols:
+		if prev_col is not None:
+			sys.stdout.write(delim)
+		if col[i] != prev_col:
+			sys.stdout.write(col[i])
+			prev_col = col[i]
+	sys.stdout.write('\n')
+
+# print rows
+prev_row = tuple([None for r in row_fields])
+for row in rows:
+
+	# write row header
+	printing = False
+	for i,f in enumerate(row_fields):
+		if row[i] != prev_row[i]:
+			printing = True
+		if printing:
+			sys.stdout.write(row[i])
+		sys.stdout.write(delim)
+	prev_row = row
+
+	# write vals
+	for col in cols:
+		if col in vals[row] and vals[row][col] is not []:
+			sys.stdout.write(combiner(vals[row][col]))
+		sys.stdout.write(delim)
+
+	sys.stdout.write('\n')
+
 
