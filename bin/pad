@@ -7,11 +7,11 @@ f = sys.stdin
 if len(sys.argv) > 1:
 	f = open(sys.argv[1], 'r')
 
-input = [l.strip() for l in f.readlines()]
+input = f.readlines()
 sizes = []
 
 for line in input:
-	fields = line.split('\t')
+	fields = [f.strip() for f in line.split('\t')]
 	while len(sizes) < len(fields):
 		sizes.append(0)
 
@@ -20,7 +20,7 @@ for line in input:
 
 for line in input:
 	for i,f in enumerate(line.split('\t')):
-		sys.stdout.write(f.ljust(sizes[i]))
+		sys.stdout.write(f.strip().ljust(sizes[i]))
 		sys.stdout.write('\t')
 	sys.stdout.write('\n')
 
