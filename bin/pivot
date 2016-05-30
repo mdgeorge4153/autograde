@@ -27,7 +27,7 @@ parser.add_argument('--tsv', help='input/output in TSV format (use tab as delime
                     action='store_const', const='\t', dest='delim')
 
 parser.add_argument('-d','--delim', help='use the given delimeter',
-                    action='store', dest='delim', metavar='D')
+                    action='store', dest='delim', metavar='D', default='\t')
 
 parser.add_argument('--no-header', help='data has no header; field names are numbers',
                     action='store_true')
@@ -38,6 +38,11 @@ parser.add_argument('filename', help='filename or -',
 
 args = parser.parse_args()
 
+
+# TODO: not sure why this is necessary; default should take care of it?
+if args.delim is None:
+	args.delim = '\t'
+
 ################################################################################
 
 import csv
@@ -45,7 +50,7 @@ import sys
 
 infile = sys.stdin if args.filename == '-' else open(args.filename, 'rb')
 
-reader = csv.DictReader(infile)
+reader = csv.DictReader(infile,delimiter=args.delim)
 
 # vals has an entry for each output row (keyed by the row as a tuple)
 # each entry is a dictionary (keyed on column names), containing a list of entries
@@ -59,7 +64,6 @@ cols   = []
 vals = {}
 
 for line in reader:
-
 	row_id = tuple([line[f] for f in row_fields])
 	if not row_id in rows:
 		rows.append(row_id)
@@ -86,6 +90,7 @@ combiner = len_as_str
 
 ################################################################################
 
+rows.sort()
 cols.sort()
 
 delim = '\t'
