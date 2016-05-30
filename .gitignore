@@ -1,5 +1,7 @@
 results
 log.txt
 .pairs.make
-results.csv
-results.tsv
+results.?sv
+stud_summary.?sv
+test_summary.?sv
+

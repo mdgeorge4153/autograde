@@ -1,10 +1,14 @@
-default: all
+default: report
 all: results.tsv
 
 help:
 	echo "TODO: usage"
 
-.PHONY: default all help
+report: test_summary.tsv stud_summary.tsv
+	bin/pad test_summary.tsv
+
+
+.PHONY: default all help report
 
 ################################################################################
 
@@ -65,4 +69,10 @@ results.tsv: $(RESULTS_LIST) $(NETIDS_LIST) $(TESTS_LIST)
 		| sed 's/-/\t/g' \
 		> $@
 
+
+test_summary.tsv: results.tsv
+	bin/pivot -r Level -r Test -c Result -v NetID < $< > $@
+
+stud_summary.tsv: results.tsv
+	bin/pivot -r NetID -c Result -v Test < $< > $@
 
