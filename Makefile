@@ -5,8 +5,13 @@ help:
 	echo "TODO: usage"
 
 report: test_summary.tsv stud_summary.tsv
+	echo ""
+	echo "RESULTS:"
 	bin/pad test_summary.tsv
 
+
+clean:
+	git clean -fdX
 
 .PHONY: default all help report
 
@@ -49,15 +54,13 @@ results/%.line: $(RESULTS_DIR)
 	netid=$$(basename $@ .line | sed 's/\([^-]*\)-\(.*\)/\1/'); \
 	test=$$(basename $@ .line | sed 's/\([^-]*\)-\(.*\)/\2/');  \
 	cd $(SUBMISSIONS_DIR)/$${netid}; \
-		echo -ne $${netid}\\t$${test}; \
 		../../$(TESTS_DIR)/$${test} > /dev/null 2> $(LOG_FILE); \
 		case $$? in \
 			0)   result=PASS ;; \
 			124) result=TIMEOUT ;; \
 			*)   result=FAIL ;; \
 		esac; \
-		echo -e \\t$${result}; \
-	cd -; \
+	cd - > /dev/null; \
 	echo -e $$(date +'%s')\\t$${netid}\\t$${test}\\t$${result} | tee $@
 
 %.csv: %.tsv
