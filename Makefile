@@ -55,13 +55,18 @@ results/%.line: $(RESULTS_DIR)
 	netid=$$(basename $@ .line | sed 's/\([^-]*\)-\(.*\)/\1/'); \
 	test=$$(basename $@ .line | sed 's/\([^-]*\)-\(.*\)/\2/');  \
 	cd $(SUBMISSIONS_DIR)/$${netid}; \
-		../../$(TESTS_DIR)/$${test} > /dev/null 2> $(LOG_FILE); \
+		echo === $${test} === >> $(LOG_FILE); \
+		date >> $(LOG_FILE); \
+		../../$(TESTS_DIR)/$${test} > /dev/null 2>> $(LOG_FILE); \
 		case $$? in \
 			0)   result=PASS ;; \
 			124) result=TIMEOUT ;; \
 			*)   result=FAIL ;; \
 		esac; \
-	cd - > /dev/null; \
+		echo $${result} >> $(LOG_FILE); \
+		echo "" >> $(LOG_FILE); \
+	cd ../../; \
+	pwd; \
 	echo -e $$(date +'%s')\\t$${netid}\\t$${test}\\t$${result} | tee $@
 
 %.csv: %.tsv
