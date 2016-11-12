@@ -15,7 +15,8 @@ parser.add_argument('-v', '--val', help='summarize the field named by NAME',
                     action='store', dest='values')
 
 parser.add_argument('-f', '--fun', help='use FUN to compute table entries',
-                    action='store', default='count')
+                    action='store', dest='fun',
+                    default='count', choices=['count','first'])
 
 parser.add_argument('--filter', help='only consider values where FIELD = VAL',
                     action='store', nargs=2, metavar=('FIELD', 'VAL'))
@@ -83,10 +84,12 @@ for line in reader:
 
 # TODO: interpret -f argument
 
-def len_as_str(l):
-	return str(len(l))
+combiners = {
+	'count': lambda(l): str(len(l)),
+	'first': lambda(l): "" if len(l) == 0 else l[0]
+}
 
-combiner = len_as_str
+combiner = combiners.get(args.fun)
 
 ################################################################################
 
